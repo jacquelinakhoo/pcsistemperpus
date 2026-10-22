@@ -23,4 +23,23 @@ class UserQuery extends Model
     {
         return DB::table($tableName)->insert($data);
     }
+
+    public function edit($tablename, $data, $IDBuku)
+    {
+        return DB::table($tablename)->where('IDBuku', $IDBuku)->update($data);
+    }
+
+        public function tampilkry($tableName1, $tableName2, $on1, $tableName3)
+    {
+        return DB::table($tableName)
+        ->join()
+        ->get();
+    }
+
+    public function join()
+    {
+        return DB::table('karyawan')
+        ->join('buku', 'karyawan.IDKaryawan', '=', 'buku.IDKaryawan')
+        ->get();
+    }
 }

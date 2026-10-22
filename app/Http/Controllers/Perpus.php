@@ -78,8 +78,8 @@ class Perpus extends Controller
     {
         if (session('Username')) {
             $query = new UserQuery;
-            $data['karyawan'] = $query->tampil('karyawan'); // Keep this for the staff list
-            $data['buku'] = $query->tampil('buku');         // Add this for the book list
+            $data['karyawan'] = $query->tampil('karyawan'); 
+            $data['buku'] = $query->tampil('buku');         
             return view('dashboardadmin', $data);
         } else {
             return redirect()->intended('/');
@@ -219,4 +219,8 @@ class Perpus extends Controller
     {
         $b= UserQuery::find($IDBuku);
         return view('editbuku', ['buku' => $penerbit]);
-    }}
+    }
+
+
+    
+}
