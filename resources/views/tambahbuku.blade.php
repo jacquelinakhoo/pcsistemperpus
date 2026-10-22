@@ -2,30 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tambahpetugas</title>
+    <title>Tambah Buku</title>
 </head>
 <body>
-    <h1>Tambah Petugas</h1>
-    <form action="/tambah/petugas" method="post">
+    <h1>Tambah Buku</h1>
+    <form action="/tambah/buku" method="post">
         @csrf
-        EmailUser:<br>
-        <input type="text" name="EmailUser"><br>
-        Username:<br>
-        <input type="text" name="Username"><br>
-        Password:<br>
-        <input type="password" name="Password"><br>
-        JenisKelamin:<br>
-        <input type="radio" name="Gender" value="Laki-laki"> Laki-laki
-        <input type="radio" name="Gender" value="Perempuan"> Perempuan<br>
-        NamaPetugas:<br>
-        <input type="text" name="NamaPetugas"><br>
-        NoTelp_P:<br>
-        <input type="text" name="NoTelp_P"><br>
-        SesiKerja:<br>
-        <input type="text" name="SesiKerja"><br>
-        <input type="submit" value="Tambah Petugas">
         
+        Judul Buku:<br>
+        <input type="text" name="JudulBuku"><br>
+        
+        Kategori:<br>
+        <input type="text" name="KategoriBuku"><br>
+        
+        Bahasa:<br>
+        <input type="text" name="Bahasa"><br>
+        
+        Cover:<br>
+        <input type="text" name="Cover"><br>
+        
+        Stok:<br>
+        <input type="number" name="Stok"><br>
+        
+        Jumlah Halaman:<br>
+        <input type="number" name="JumlahHal"><br>
+        
+        Tahun Terbit:<br>
+        <input type="text" name="TahunTerbit"><br>
+        
+        ISBN:<br>
+        <input type="text" name="ISBN"><br>
+        
+        Nama Penulis:<br>
+        <input type="text" name="NamaPenulis"><br>
+        
+        ID Penerbit:<br>
+        <input type="number" name="IDPenerbit"><br>
+        
+        Lokasi Rak:<br>
+        <input type="text" name="LokasiRak"><br><br>
+
+        <input type="submit" value="Tambah Buku">
     </form>
+    
+    <br>
+    <a href="/dashboard/admin">Back to Dashboard</a>
 </body>
 </html>

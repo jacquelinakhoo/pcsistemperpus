@@ -57,16 +57,18 @@ class Perpus extends Controller
         if (session('Username')) {
             $query = new UserQuery;
             $data['buku'] = $query->tampil('buku'); 
-            return view('dashboardsiswa', $data);   
+            return view('dashboardsiswa', $data);  
         } else {
             return redirect()->intended('/');
         }
     }
 
-          public function dashboardPetugas()
+          public function dashboardKaryawan()
     {
         if (session('Username')) {
-            return view('dashboardpetugas');
+            $query = new UserQuery;
+            $data['buku'] = $query->tampil('buku');
+            return view('dashboardkaryawan', $data);
         } else {
             return redirect()->intended('/');
         }
@@ -76,7 +78,8 @@ class Perpus extends Controller
     {
         if (session('Username')) {
             $query = new UserQuery;
-            $data['karyawan'] = $query->tampil('karyawan');
+            $data['karyawan'] = $query->tampil('karyawan'); // Keep this for the staff list
+            $data['buku'] = $query->tampil('buku');         // Add this for the book list
             return view('dashboardadmin', $data);
         } else {
             return redirect()->intended('/');
@@ -172,4 +175,48 @@ class Perpus extends Controller
         
         return redirect()->intended('/dashboard/admin');
     }
-}
+
+        public function tambahBuku()
+    {
+        return view('tambahbuku');
+    }
+
+    public function aksiTambahBuku(Request $request)
+    {
+        $judul = $request->input('JudulBuku');
+        $kategori = $request->input('KategoriBuku');
+        $bahasa = $request->input('Bahasa');
+        $cover = $request->input('Cover');
+        $stok = $request->input('Stok');
+        $jumlahhal = $request->input('JumlahHal');
+        $tahun = $request->input('TahunTerbit');
+        $isbn = $request->input('ISBN');
+        $penulis = $request->input('NamaPenulis');
+        $penerbit = $request->input('IDPenerbit');
+        $rak = $request->input('LokasiRak');
+
+        $dataBuku = array(
+            'JudulBuku' => $judul,
+            'KategoriBuku' => $kategori,
+            'Bahasa' => $bahasa,
+            'Cover' => $cover,
+            'Stok' => $stok,
+            'JumlahHal' => $jumlahhal,
+            'TahunTerbit' => $tahun,
+            'ISBN' => $isbn,
+            'NamaPenulis' => $penulis,
+            'IDPenerbit' => $penerbit,
+            'LokasiRak' => $rak
+        );
+
+        $query = new UserQuery;
+        $query->tambah('buku', $dataBuku);
+        
+        return redirect()->intended('/dashboard/admin');
+    }
+    
+        public function editBuku()
+    {
+        $b= UserQuery::find($IDBuku);
+        return view('editbuku', ['buku' => $penerbit]);
+    }}
