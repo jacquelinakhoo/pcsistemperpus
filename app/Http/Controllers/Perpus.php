@@ -78,7 +78,7 @@ class Perpus extends Controller
     {
         if (session('Username')) {
             $query = new UserQuery;
-            $data['karyawan'] = $query->tampil('karyawan'); 
+            $data['karyawan'] = $query->tampilKaryawan(); 
             $data['buku'] = $query->tampil('buku');         
             return view('dashboardadmin', $data);
         } else {
@@ -215,12 +215,110 @@ class Perpus extends Controller
         return redirect()->intended('/dashboard/admin');
     }
     
-        public function editBuku()
+
+    public function editKaryawan($id)
     {
-        $b= UserQuery::find($IDBuku);
-        return view('editbuku', ['buku' => $penerbit]);
+        $query = new UserQuery;
+        
+        $conditions = array('IDKaryawan' => $id);
+        $karyawan = $query->pull('karyawan', $conditions);
+        
+        $userConditions = array('IDUser' => $karyawan->IDUser);
+        $user = $query->pull('users', $userConditions);
+
+        return view('editkaryawan', ['karyawan' => $karyawan, 'user' => $user]);
+    }
+
+    public function aksiEditKaryawan(Request $request, $id)
+    {
+        $request->validate([
+            'Username' => 'required',
+            'EmailUser' => 'required',
+            'NamaKaryawan' => 'required',
+            'NoTelp_K' => 'required',
+            'SesiKerja' => 'required',
+            'Jabatan' => 'required'
+        ]);
+
+        $query = new UserQuery;
+
+        $dataKaryawan = array(
+            'NamaKaryawan' => $request->input('NamaKaryawan'),
+            'NoTelp_K' => $request->input('NoTelp_K'),
+            'SesiKerja' => $request->input('SesiKerja'),
+            'Jabatan' => $request->input('Jabatan')
+        );
+        $conditionsKaryawan = array('IDKaryawan' => $id);
+        $query->updateData('karyawan', $conditionsKaryawan, $dataKaryawan);
+
+        $currentKaryawan = $query->pull('karyawan', $conditionsKaryawan);
+        $dataUser = array(
+            'Username' => $request->input('Username'),
+            'EmailUser' => $request->input('EmailUser')
+        );
+        $conditionsUser = array('IDUser' => $currentKaryawan->IDUser);
+        $query->updateData('users', $conditionsUser, $dataUser);
+
+        return redirect()->intended('/dashboard/admin');
+    }
+
+    public function hapusKaryawan($id)
+    {
+        $query = new UserQuery;
+        
+        $conditions = array('IDKaryawan' => $id);
+        $karyawan = $query->pull('karyawan', $conditions);
+
+        $query->hapus('karyawan', 'IDKaryawan', $id);
+
+        $query->hapus('users', 'IDUser', $karyawan->IDUser);
+
+        return redirect()->intended('/dashboard/admin');
     }
 
 
-    
-}
+    public function editBuku($id)
+    {
+        $query = new UserQuery;
+        $conditions = array('IDBuku' => $id);
+        $buku = $query->pull('buku', $conditions);
+
+        return view('editbuku', ['buku' => $buku]);
+    }
+
+    public function aksiEditBuku(Request $request, $id)
+    {
+        $request->validate([
+            'JudulBuku' => 'required',
+            'KategoriBuku' => 'required',
+            'Stok' => 'required'
+        ]);
+
+        $dataBuku = array(
+            'JudulBuku' => $request->input('JudulBuku'),
+            'KategoriBuku' => $request->input('KategoriBuku'),
+            'Bahasa' => $request->input('Bahasa'),
+            'Cover' => $request->input('Cover'),
+            'Stok' => $request->input('Stok'),
+            'JumlahHal' => $request->input('JumlahHal'),
+            'TahunTerbit' => $request->input('TahunTerbit'),
+            'ISBN' => $request->input('ISBN'),
+            'NamaPenulis' => $request->input('NamaPenulis'),
+            'IDPenerbit' => $request->input('IDPenerbit'),
+            'LokasiRak' => $request->input('LokasiRak')
+        );
+
+        $query = new UserQuery;
+        $conditions = array('IDBuku' => $id);
+        $query->updateData('buku', $conditions, $dataBuku);
+
+        return redirect()->intended('/dashboard/admin');
+    }
+
+    public function hapusBuku($id)
+    {
+        $query = new UserQuery;
+        $query->hapus('buku', 'IDBuku', $id); 
+        return redirect()->intended('/dashboard/admin');
+    }
+}    

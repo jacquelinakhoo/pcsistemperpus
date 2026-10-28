@@ -14,6 +14,7 @@
     <tr>
             <th>No</th>
             <th>Nama</th>
+            <th>Username</th>
             <th>No Telp</th>
             <th>Sesi Kerja</th>
             <th>Jabatan</th>
@@ -26,6 +27,7 @@
         <tr>
             <td><?= $no++ ?></td>
             <td><?= $worker->NamaKaryawan ?></td>
+            <td><?= $worker->Username ?></td>
             <td><?= $worker->NoTelp_K ?></td>
             <td><?= $worker->SesiKerja ?></td>
             <td><?= $worker->Jabatan ?></td>

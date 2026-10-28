@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard Karyawan</title>
-</head>
-<body>
+@extends('template')
+@section('content')
 
     <h1>Dashboard Karyawan</h1>
     <p>Selamat datang, <?= session('Username') ?></p>
@@ -12,7 +8,7 @@
     <p><a href="/logout">Logout</a></p>
 
     <h2>Daftar Buku</h2>
-    <table border="1" width="800">
+    <table border="1" width="1000">
         <tr>
             <th>No</th>
             <th>Judul Buku</th>
@@ -44,7 +40,7 @@
             <td><?= $b->LokasiRak ?></td>
             <td><?= $b->Stok ?></td>
             <td>
-                <a href="/edit/buku/<?= $b->IDBuku ?>">Edit</a>
+                <a href="/edit/buku/<?= $b->IDBuku ?>"><button type="button" class="btn btn-warning">Edit</button></a> </a>
             </td>
         </tr>
         <?php
@@ -52,5 +48,4 @@
         ?>
     </table>
 
-</body>
-</html>
+@endsection

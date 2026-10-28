@@ -19,5 +19,13 @@ Route::post('/tambah/karyawan', 'App\Http\Controllers\Perpus@aksiTambahKaryawan'
 Route::get('/tambah/buku', 'App\Http\Controllers\Perpus@tambahBuku');
 Route::post('/tambah/buku', 'App\Http\Controllers\Perpus@aksiTambahBuku');
 
-Route::get('/edit/buku/{IDBuku}', 'App\Http\Controllers\Perpus@editBuku');
-Route::post('/edit/buku/{IDBuku}', 'App\Http\Controllers\Perpus@aksiEditBuku');
+
+//  Aksi Karyawan
+Route::get('/edit/karyawan/{id}', 'App\Http\Controllers\Perpus@editKaryawan');
+Route::post('/edit/karyawan/{id}', 'App\Http\Controllers\Perpus@aksiEditKaryawan');
+Route::get('/hapus/karyawan/{id}', 'App\Http\Controllers\Perpus@hapusKaryawan');
+
+//  AKsi Buku
+Route::get('/edit/buku/{id}', 'App\Http\Controllers\Perpus@editBuku');
+Route::post('/edit/buku/{id}', 'App\Http\Controllers\Perpus@aksiEditBuku');
+Route::get('/hapus/buku/{id}', 'App\Http\Controllers\Perpus@hapusBuku');

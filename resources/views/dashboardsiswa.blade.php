@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard Siswa</title>
-</head>
-<body>
+@extends('template')
+@section('content')
 
     <h1>Dashboard Siswa</h1>
     <p>Selamat datang, <?= session('Username') ?></p>
@@ -34,7 +30,7 @@
             <td><?= $b->JumlahHal ?></td>
             <td><?= $b->Stok ?></td>
             
-            <td><a href="#">Pinjam</a></td>
+            <td><a href="#"><button type="button" class="btn btn-warning">Pinjam</button></a> </td>
         </tr>
         <?php
         }
@@ -43,3 +39,5 @@
 
 </body>
 </html>
+
+@endsection
