@@ -39,4 +39,30 @@ class UserQuery extends Model
     {
         return DB::table($tableName)->where($columnName, $id)->delete();
     }
+
+    public function tambahDapatId($tableName, $data)
+    {
+        return DB::table($tableName)->insertGetId($data);
+    }
+
+    public function kurangiStok($IDBuku)
+    {
+        return DB::table('buku')->where('IDBuku', $IDBuku)->decrement('Stok');
+    }
+
+     public function tambahStok($IDBuku)
+    {
+        return DB::table('buku')->where('IDBuku', $IDBuku)->increment('Stok');
+    }
+
+        public function tampilPeminjaman()
+    {
+        return DB::table('peminjaman')
+                 ->join('siswa', 'peminjaman.IDSiswa', '=', 'siswa.IDSiswa')
+                 ->join('karyawan', 'peminjaman.IDKaryawan', '=', 'karyawan.IDKaryawan')
+                 ->join('detailpeminjaman', 'peminjaman.IDPeminjaman', '=', 'detailpeminjaman.IDPeminjaman')
+                 ->join('buku', 'detailpeminjaman.IDBuku', '=', 'buku.IDBuku')
+                 ->select('peminjaman.*', 'siswa.NamaSiswa', 'karyawan.NamaKaryawan', 'buku.JudulBuku')
+                 ->get();
+    }
 }

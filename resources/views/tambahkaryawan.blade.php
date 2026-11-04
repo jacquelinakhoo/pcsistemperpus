@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Tambah Karyawan</h1>
-    <form action="/tambah/karyawan" method="post">
+    <form action="/tambah/karyawan" method="post" enctype="multipart/form-data">
         @csrf
         EmailUser:<br>
         <input type="text" name="EmailUser"><br>
@@ -33,6 +33,8 @@
                 <option value="<?= $j->NamaJabatan ?>"><?= $j->NamaJabatan ?></option>
             <?php } ?>
         </select><br><br>
+        Foto Karyawan:
+        <input type="file" name="Foto" accept="image/*"> <br><br>
         <input type="submit" value="Tambah Karyawan">
     </form>
 </body>

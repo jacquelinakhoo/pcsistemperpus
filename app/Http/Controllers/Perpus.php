@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UserQuery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class Perpus extends Controller
 {
@@ -39,6 +40,13 @@ class Perpus extends Controller
             } else if ($user->Role == 'Petugas') {
                 return redirect()->intended('/dashboard/petugas');
             } else {
+                $conditionsSiswa = array('IDUser' => $user->IDUser);
+                $siswa = $query->pull('siswa', $conditionsSiswa);
+                
+                if ($siswa) {
+                    session(['IDSiswa' => $siswa->IDSiswa]);
+                }
+                
                 return redirect()->intended('/dashboard/siswa');
             }
         } else {
@@ -63,11 +71,12 @@ class Perpus extends Controller
         }
     }
 
-          public function dashboardKaryawan()
+    public function dashboardKaryawan()
     {
         if (session('Username')) {
             $query = new UserQuery;
             $data['buku'] = $query->tampil('buku');
+            $data['peminjaman'] = $query->tampilPeminjaman();
             return view('dashboardkaryawan', $data);
         } else {
             return redirect()->intended('/');
@@ -77,14 +86,55 @@ class Perpus extends Controller
     public function dashboardAdmin()
     {
         if (session('Username')) {
-            $query = new UserQuery;
-            $data['karyawan'] = $query->tampilKaryawan(); 
-            $data['buku'] = $query->tampil('buku');         
-            return view('dashboardadmin', $data);
+            return view('dashboardadmin');
         } else {
             return redirect()->intended('/');
         }
     }
+
+    // ================= ADMIN VIEWS =================
+
+    public function adminKaryawan()
+    {
+        if (session('Username')) {
+            $query = new UserQuery;
+            $data['karyawan'] = $query->tampilKaryawan();
+            return view('admin.karyawan', $data);
+        }
+        return redirect('/');
+    }
+
+    public function adminBuku()
+    {
+        if (session('Username')) {
+            $query = new UserQuery;
+            $data['buku'] = $query->tampil('buku');
+            return view('admin.buku', $data);
+        }
+        return redirect('/');
+    }
+
+    public function adminPeminjaman()
+    {
+        if (session('Username')) {
+            $query = new UserQuery;
+            $data['peminjaman'] = $query->tampilPeminjaman();
+            return view('admin.peminjaman', $data);
+        }
+        return redirect('/');
+    }
+
+    public function adminDenda()
+    {
+        if (session('Username')) {
+            $query = new UserQuery;
+            $data['denda'] = $query->tampil('denda'); 
+            return view('admin.denda', $data);
+        }
+        return redirect('/');
+    }
+
+    // ================= AUTH & KARYAWAN =================
 
     public function register()
     {
@@ -133,7 +183,7 @@ class Perpus extends Controller
         return redirect()->intended('/');
     }
     
-        public function tambahKaryawan()
+    public function tambahKaryawan()
     {
         $query = new UserQuery;
         $data['jabatan'] = $query->tampil('jabatan'); 
@@ -150,6 +200,14 @@ class Perpus extends Controller
         $notelp = $request->input('NoTelp_K');
         $sesi = $request->input('SesiKerja');
         $jabatan = $request->input('Jabatan'); 
+        $file = $request->file('Foto');
+        $nama_foto="";
+
+        if ($file) {
+            $nama_foto = time() . "_" . $file->getClientOriginalName(); 
+            $tujuan_upload = 'assets/img';
+            $file->move($tujuan_upload, $nama_foto);
+        }
 
         $dataUser = array(
             'Username' => $username,
@@ -169,52 +227,13 @@ class Perpus extends Controller
             'NoTelp_K' => $notelp,
             'Jabatan' => $jabatan, 
             'SesiKerja' => $sesi,
-            'IDUser' => $user->IDUser
+            'IDUser' => $user->IDUser,
+            'Foto' => $nama_foto
         );
         $query->tambah('karyawan', $dataKaryawan);
         
         return redirect()->intended('/dashboard/admin');
     }
-
-        public function tambahBuku()
-    {
-        return view('tambahbuku');
-    }
-
-    public function aksiTambahBuku(Request $request)
-    {
-        $judul = $request->input('JudulBuku');
-        $kategori = $request->input('KategoriBuku');
-        $bahasa = $request->input('Bahasa');
-        $cover = $request->input('Cover');
-        $stok = $request->input('Stok');
-        $jumlahhal = $request->input('JumlahHal');
-        $tahun = $request->input('TahunTerbit');
-        $isbn = $request->input('ISBN');
-        $penulis = $request->input('NamaPenulis');
-        $penerbit = $request->input('IDPenerbit');
-        $rak = $request->input('LokasiRak');
-
-        $dataBuku = array(
-            'JudulBuku' => $judul,
-            'KategoriBuku' => $kategori,
-            'Bahasa' => $bahasa,
-            'Cover' => $cover,
-            'Stok' => $stok,
-            'JumlahHal' => $jumlahhal,
-            'TahunTerbit' => $tahun,
-            'ISBN' => $isbn,
-            'NamaPenulis' => $penulis,
-            'IDPenerbit' => $penerbit,
-            'LokasiRak' => $rak
-        );
-
-        $query = new UserQuery;
-        $query->tambah('buku', $dataBuku);
-        
-        return redirect()->intended('/dashboard/admin');
-    }
-    
 
     public function editKaryawan($id)
     {
@@ -270,12 +289,51 @@ class Perpus extends Controller
         $karyawan = $query->pull('karyawan', $conditions);
 
         $query->hapus('karyawan', 'IDKaryawan', $id);
-
         $query->hapus('users', 'IDUser', $karyawan->IDUser);
 
         return redirect()->intended('/dashboard/admin');
     }
 
+    // ================= BUKU =================
+
+    public function tambahBuku()
+    {
+        return view('tambahbuku');
+    }
+
+    public function aksiTambahBuku(Request $request)
+    {
+        $judul = $request->input('JudulBuku');
+        $kategori = $request->input('KategoriBuku');
+        $bahasa = $request->input('Bahasa');
+        $cover = $request->input('Cover');
+        $stok = $request->input('Stok');
+        $jumlahhal = $request->input('JumlahHal');
+        $tahun = $request->input('TahunTerbit');
+        $isbn = $request->input('ISBN');
+        $penulis = $request->input('NamaPenulis');
+        $penerbit = $request->input('IDPenerbit');
+        $rak = $request->input('LokasiRak');
+
+        $dataBuku = array(
+            'JudulBuku' => $judul,
+            'KategoriBuku' => $kategori,
+            'Bahasa' => $bahasa,
+            'Cover' => $cover,
+            'Stok' => $stok,
+            'JumlahHal' => $jumlahhal,
+            'TahunTerbit' => $tahun,
+            'ISBN' => $isbn,
+            'NamaPenulis' => $penulis,
+            'IDPenerbit' => $penerbit,
+            'LokasiRak' => $rak
+        );
+
+        $query = new UserQuery;
+        $query->tambah('buku', $dataBuku);
+        
+        return redirect()->intended('/dashboard/admin');
+    }
 
     public function editBuku($id)
     {
@@ -321,4 +379,105 @@ class Perpus extends Controller
         $query->hapus('buku', 'IDBuku', $id); 
         return redirect()->intended('/dashboard/admin');
     }
-}    
+
+    // ================= TRANSAKSI =================
+
+    public function pinjamBuku($id)
+    {
+        if (!session('IDSiswa')) {
+            return redirect()->intended('/');
+        }
+
+        $query = new UserQuery;
+        $buku = $query->pull('buku', ['IDBuku' => $id]);
+        
+        if ($buku->Stok <= 0) {
+            return redirect()->intended('/dashboard/siswa');
+        }
+
+        $dataPeminjaman = array(
+            'IDSiswa' => session('IDSiswa'),
+            'IDKaryawan' => 1, 
+            'TglPeminjaman' => date('Y-m-d H:i:s'),
+            'Status' => 'Belum'
+        );
+        
+        $IDPeminjamanBaru = $query->tambahDapatId('peminjaman', $dataPeminjaman);
+
+        $dataDetail = array(
+            'IDPeminjaman' => $IDPeminjamanBaru,
+            'IDBuku' => $id,
+            'Jumlah' => 1
+        );
+        $query->tambah('detailpeminjaman', $dataDetail);
+
+        $query->kurangiStok($id);
+
+        return redirect()->intended('/dashboard/siswa');
+    }
+
+    public function formKembalikan($id)
+    {
+        $query = new UserQuery;
+        $data['peminjaman'] = $query->pull('peminjaman', ['IDPeminjaman' => $id]);
+        return view('kembalikan', $data);
+    }
+
+    public function aksiKembalikan(Request $request, $id)
+    {
+        $query = new UserQuery;
+        
+        $dataKembali = array(
+            'IDPeminjaman' => $id,
+            'TglPengembalian' => date('Y-m-d H:i:s'),
+            'KondisiBuku' => $request->input('KondisiBuku')
+        );
+        $query->tambah('pengembalian', $dataKembali);
+        $query->updateData('peminjaman', ['IDPeminjaman' => $id], ['Status' => 'Sudah']);
+
+        $detail = $query->pull('detailpeminjaman', ['IDPeminjaman' => $id]);
+        $query->tambahStok($detail->IDBuku);
+
+        return redirect()->intended('/dashboard/admin'); 
+    }
+
+    public function formDenda($id)
+    {
+        return view('denda', ['IDPeminjaman' => $id]);
+    }
+
+    public function aksiDenda(Request $request, $id)
+    {
+        $dataDenda = array(
+            'IDPeminjaman' => $id,
+            'AlasanDenda' => $request->input('AlasanDenda'),
+            'JumlahDenda' => $request->input('JumlahDenda'),
+            'StatusBayar' => 'Belum Lunas'
+        );
+        
+        $query = new UserQuery;
+        $query->tambah('denda', $dataDenda);
+
+        return redirect()->intended('/dashboard/admin');
+    }
+
+        public function karyawanBuku()
+    {
+        if (session('Username')) {
+            $query = new UserQuery;
+            $data['buku'] = $query->tampil('buku');
+            return view('karyawan.buku', $data);
+        }
+        return redirect('/');
+    }
+
+    public function karyawanPeminjaman()
+    {
+        if (session('Username')) {
+            $query = new UserQuery;
+            $data['peminjaman'] = $query->tampilPeminjaman();
+            return view('karyawan.peminjaman', $data);
+        }
+        return redirect('/');
+    }
+}

@@ -30,7 +30,9 @@
             <td><?= $b->JumlahHal ?></td>
             <td><?= $b->Stok ?></td>
             
-            <td><a href="#"><button type="button" class="btn btn-warning">Pinjam</button></a> </td>
+            <td>
+    <a href="/pinjam/<?= $b->IDBuku ?>" class="btn btn-warning">Pinjam</a>
+</td>
         </tr>
         <?php
         }
