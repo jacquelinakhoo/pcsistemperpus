@@ -2,7 +2,7 @@
 @section('content')
 
 <div class="pagetitle">
-  <h1>Data Buku</h1>
+  <h1>Data Peminjaman</h1>
 </div>
 
 <section class="section">
@@ -10,30 +10,38 @@
     <div class="col-lg-12">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Daftar Buku Perpustakaan</h5>
-          <a href="/tambah/buku" class="btn btn-primary mb-3">Tambah Buku</a>
-
+          <h5 class="card-title">Daftar Transaksi Peminjaman</h5>
+          
           <table class="table table-striped table-hover">
             <thead>
               <tr>
                 <th>No</th>
+                <th>Nama Siswa</th>
                 <th>Judul Buku</th>
-                <th>Kategori</th>
-                <th>Penulis</th>
-                <th>Stok</th>
+                <th>Tgl Pinjam</th>
+                <th>Status</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              <?php $no = 1; foreach ($buku as $b) { ?>
+              <?php $no = 1; foreach ($peminjaman as $p) { ?>
               <tr>
                 <td><?= $no++ ?></td>
-                <td><?= $b->JudulBuku ?></td>
-                <td><?= $b->KategoriBuku ?></td>
-                <td><?= $b->NamaPenulis ?></td>
-                <td><?= $b->Stok ?></td>
+                <td><?= $p->NamaSiswa ?></td>
+                <td><?= $p->JudulBuku ?></td>
+                <td><?= $p->TglPeminjaman ?></td>
                 <td>
-                  <a href="/edit/buku/<?= $b->IDBuku ?>" class="btn btn-sm btn-warning">Edit</a>
+                  <?php if ($p->Status == 'Belum') { ?>
+                    <span class="badge bg-warning">Dipinjam</span>
+                  <?php } else { ?>
+                    <span class="badge bg-success">Selesai</span>
+                  <?php } ?>
+                </td>
+                <td>
+                  <?php if ($p->Status == 'Belum') { ?>
+                    <a href="/kembalikan/<?= $p->IDPeminjaman ?>" class="btn btn-sm btn-success">Kembalikan</a>
+                    <a href="/denda/<?= $p->IDPeminjaman ?>" class="btn btn-sm btn-danger">Beri Denda</a>
+                  <?php } ?>
                 </td>
               </tr>
               <?php } ?>
@@ -46,4 +54,4 @@
   </div>
 </section>
 
-@endsection
+@endsection   

@@ -20,7 +20,13 @@
                 <th>Judul Buku</th>
                 <th>Kategori</th>
                 <th>Penulis</th>
+                <th>Bahasa</th>
+                <th>Cover</th>
                 <th>Stok</th>
+                <th>Jumlah Hal</th>
+                <th>Tahun Terbit</th>
+                <th>ISBN</th>
+                <th>Lokasi Rak</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -31,7 +37,13 @@
                 <td><?= $b->JudulBuku ?></td>
                 <td><?= $b->KategoriBuku ?></td>
                 <td><?= $b->NamaPenulis ?></td>
+                <td><?= $b->Bahasa ?></td>
+                <td><?= $b->Cover ?></td>
                 <td><?= $b->Stok ?></td>
+                <td><?= $b->JumlahHal ?></td>
+                <td><?= $b->TahunTerbit ?></td>
+                <td><?= $b->ISBN ?></td>
+                <td><?= $b->LokasiRak ?></td>
                 <td>
                   <a href="/edit/buku/<?= $b->IDBuku ?>" class="btn btn-sm btn-warning">Edit</a>
                   <a href="/hapus/buku/<?= $b->IDBuku ?>" class="btn btn-sm btn-danger">Hapus</a>

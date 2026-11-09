@@ -1,7 +1,7 @@
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
 
-      <!-- DASHBOARD (Different links per role) -->
+      <!-- DASHBOARD -->
       <li class="nav-item">
         <?php if(session('Role') == 'Admin') { ?>
             <a class="nav-link" href="/dashboard/admin">

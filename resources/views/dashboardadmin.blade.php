@@ -10,7 +10,8 @@
     <div class="col-lg-12">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Selamat Datang, <?= session('Username') ?>!</h5>
+          <h5 class="card-title">Selamat Datang, {{session('Username')}}! Kamu adalah {{session('Role')}} </h5>
+
           <p>Silakan pilih menu di sebelah kiri untuk mengelola data Sistem Perpustakaan.</p>
         </div>
       </div>
