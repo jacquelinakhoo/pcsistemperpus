@@ -62,6 +62,26 @@
       </li>
       <?php } ?>
 
+            <!-- For Admin -->
+      <?php if(session('Role') == 'Admin') { ?>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/admin/denda">
+          <i class="bi bi-cash-coin"></i>
+          <span>Data Denda</span>
+        </a>
+      </li>
+      <?php } ?>
+
+      <!-- For Karyawan -->
+      <?php if(session('Role') == 'Petugas') { ?>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/karyawan/denda">
+          <i class="bi bi-cash-coin"></i>
+          <span>Data Denda</span>
+        </a>
+      </li>
+      <?php } ?>
+
       <!-- LOGOUT (Everyone) -->
       <li class="nav-heading">Akun</li>
       <li class="nav-item">

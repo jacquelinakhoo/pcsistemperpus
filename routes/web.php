@@ -41,6 +41,7 @@ Route::post('/kembalikan/{id}', 'App\Http\Controllers\Perpus@aksiKembalikan');
 //  Denda
 Route::get('/denda/{id}', 'App\Http\Controllers\Perpus@formDenda');
 Route::post('/denda/{id}', 'App\Http\Controllers\Perpus@aksiDenda');
+Route::get('/karyawan/denda', 'App\Http\Controllers\Perpus@karyawanDenda');
 
 
 // Admin Views

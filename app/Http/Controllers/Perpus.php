@@ -344,33 +344,45 @@ class Perpus extends Controller
         return view('editbuku', ['buku' => $buku]);
     }
 
-    public function aksiEditBuku(Request $request, $id)
+        public function aksiEditBuku(Request $request, $id)
     {
-        $request->validate([
-            'JudulBuku' => 'required',
-            'KategoriBuku' => 'required',
-            'Stok' => 'required'
-        ]);
+        $query = new UserQuery;
+        $conditions = array('IDBuku' => $id);
+
+        $bukuLama = $query->pull('buku', $conditions);
 
         $dataBuku = array(
             'JudulBuku' => $request->input('JudulBuku'),
             'KategoriBuku' => $request->input('KategoriBuku'),
-            'Bahasa' => $request->input('Bahasa'),
-            'Cover' => $request->input('Cover'),
-            'Stok' => $request->input('Stok'),
             'JumlahHal' => $request->input('JumlahHal'),
-            'TahunTerbit' => $request->input('TahunTerbit'),
-            'ISBN' => $request->input('ISBN'),
-            'NamaPenulis' => $request->input('NamaPenulis'),
-            'IDPenerbit' => $request->input('IDPenerbit'),
-            'LokasiRak' => $request->input('LokasiRak')
+            'Stok' => $request->input('Stok')
         );
 
-        $query = new UserQuery;
-        $conditions = array('IDBuku' => $id);
+        if (session('Role') == 'Admin') {
+            $dataBuku['Bahasa'] = $request->input('Bahasa');
+            $dataBuku['Cover'] = $request->input('Cover');
+            $dataBuku['TahunTerbit'] = $request->input('TahunTerbit');
+            $dataBuku['ISBN'] = $request->input('ISBN');
+            $dataBuku['NamaPenulis'] = $request->input('NamaPenulis');
+            $dataBuku['IDPenerbit'] = $request->input('IDPenerbit');
+            $dataBuku['LokasiRak'] = $request->input('LokasiRak');
+        } else {
+            $dataBuku['Bahasa'] = $bukuLama->Bahasa;
+            $dataBuku['Cover'] = $bukuLama->Cover;
+            $dataBuku['TahunTerbit'] = $bukuLama->TahunTerbit;
+            $dataBuku['ISBN'] = $bukuLama->ISBN;
+            $dataBuku['NamaPenulis'] = $bukuLama->NamaPenulis;
+            $dataBuku['IDPenerbit'] = $bukuLama->IDPenerbit;
+            $dataBuku['LokasiRak'] = $bukuLama->LokasiRak;
+        }
+
         $query->updateData('buku', $conditions, $dataBuku);
 
-        return redirect()->intended('/dashboard/admin');
+        if (session('Role') == 'Admin') {
+            return redirect()->intended('/admin/buku');
+        } else {
+            return redirect()->intended('/karyawan/buku');
+        }
     }
 
     public function hapusBuku($id)
@@ -479,5 +491,25 @@ class Perpus extends Controller
             return view('karyawan.peminjaman', $data);
         }
         return redirect('/');
+    }
+    
+        public function dendaAdmin()
+    {
+        if (session('Role') != 'Admin') {
+            return redirect('/');
+        }
+        $query = new UserQuery;
+        $data['denda'] = $query->tampilDenda(); // Using the new JOIN
+        return view('admin.denda', $data);
+    }
+
+    public function karyawanDenda()
+    {
+        if (session('Role') != 'Petugas' && session('Role') != 'Admin') {
+            return redirect('/');
+        }
+        $query = new UserQuery;
+        $data['denda'] = $query->tampilDenda(); // Using the new JOIN
+        return view('karyawan.denda', $data);
     }
 }

@@ -65,4 +65,13 @@ class UserQuery extends Model
                  ->select('peminjaman.*', 'siswa.NamaSiswa', 'karyawan.NamaKaryawan', 'buku.JudulBuku')
                  ->get();
     }
+
+        public function tampilDenda()
+    {
+        return DB::table('denda')
+                 ->join('peminjaman', 'denda.IDPeminjaman', '=', 'peminjaman.IDPeminjaman')
+                 ->join('siswa', 'peminjaman.IDSiswa', '=', 'siswa.IDSiswa')
+                 ->select('denda.*', 'siswa.NamaSiswa')
+                 ->get();
+    }
 }
